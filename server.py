@@ -7,7 +7,7 @@ class Handler(SimpleHTTPRequestHandler):
 
     def end_headers(self):
         self.send_header("Content-Security-Policy",
-                         "default-src 'self'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'")
+                         "default-src 'self'; frame-ancestors 'none'; form-action 'self'")
         self.send_header("X-Content-Type-Options", "nosniff")
         self.send_header("X-Frame-Options", "DENY")
         self.send_header("Permissions-Policy", "geolocation=(), camera=(), microphone=()")

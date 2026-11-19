@@ -5,19 +5,18 @@ on:
     branches: [ main, develop, 'feature/**', 'release/**', 'hotfix/**' ]
   pull_request:
     branches: [ main, develop ]
-  workflow_dispatch:   # permite rodar pelo botão "Run workflow"
+  workflow_dispatch:   
 
 permissions:
   contents: read
   security-events: write
 
-# Variáveis da pipeline
+
 env:
   NOME_PROJETO: "Projeto Pipeline CI/CD"
   PORTA: "8080"
 
 jobs:
-  # ---------- STAGE 1: BUILD ----------
   build:
     name: Build
     runs-on: ubuntu-latest
@@ -33,7 +32,7 @@ jobs:
           python3 -m py_compile server.py
           echo "Build OK"
 
-  # ---------- STAGE 2: TESTES (em paralelo) ----------
+  
   teste-pagina:
     name: Teste - Página
     runs-on: ubuntu-latest
@@ -58,7 +57,7 @@ jobs:
           curl -f http://localhost:$PORTA
           echo "Aplicação respondendo na porta $PORTA"
 
-  # ---------- STAGE 3: SAST ----------
+  # SAST 
   sast:
     name: SAST - Semgrep
     runs-on: ubuntu-latest
@@ -84,7 +83,7 @@ jobs:
           name: relatorio-semgrep
           path: semgrep.sarif
 
-  # ---------- STAGE 4: DAST ----------
+  # DAST
   dast:
     name: DAST - OWASP ZAP
     runs-on: ubuntu-latest
@@ -100,7 +99,7 @@ jobs:
             sleep 2
           done
 
-      # Alertas aceitos (apenas informativos), com justificativa
+      
       - name: Regras do ZAP
         run: |
           mkdir -p .zap
@@ -118,7 +117,6 @@ jobs:
           cmd_options: '-a'
           artifact_name: relatorio-zap
 
-  # ---------- STAGE 5: DEPLOY ----------
   deploy:
     name: Deploy
     runs-on: ubuntu-latest
